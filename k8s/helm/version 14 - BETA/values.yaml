@@ -1,0 +1,72 @@
+# Default values for the zenon service engine.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Required values are:
+# licensing.*.server  <- IP or Name of Licensing Server
+# licensing.*.serial  <- Serial of License to use (license mist be activated on license server)
+
+# Recommended values to set are:
+# volumes.*.storageClass                    <- storage class of the k8s cluster to use (Default SC if left empty)
+# volumes.*.accessMode                      <- access mode to be used for the persistent volume (SC must support that accessMode)
+# zenonLoggingServer.port                   <- specify the port that is used to access the zenon logging server externally, must be in range 30000-32767
+# The port ranges of 30000-32767 is defined by the Kubernetes NodePort range, see: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
+
+
+# OPCUA GW specifics:
+# serviceEngine.hostName                    <- hostname of the created pod itself, important in combination with OPC UA as zenon uses the systems hostname for certificate creation and configuration
+# serviceEngine.opcUaService.enabled        <- enable a service for the OPC UA Server to be reached from the outside
+# serviceEngine.opcUaService.port           <- specify the port that is used to access the OPC UA server externally, must be in range 30000-32767
+# serviceEngine.opcUaService.serviceIp      <- the IP for the OPC UA Server to be made available on
+# DISCLAIMER: Due to the method that kubernetes assigns the hostname to created pods, the service-engine pod running the OPC UA Server receives only a server-internal DNS name
+# as zenon uses the OS internal hostname to configure the OPC UA server and create the self-signed certificate, this might lead to problems when establishing a connection.
+
+# The zenon project files will have to be copied manually into the created persistent volume in order for the service-engine to start
+
+
+version:
+  tag: "14.0.289815"
+
+licensing:
+  serviceEngine:
+    server: "192.168.0.1"
+    serial: "C00AA-00000-00000-00000-00000"
+  processGateway:
+    server: "192.168.0.1"
+    serial: "C00AA-00000-00000-00000-00000"
+  logicService:
+    server: "192.168.0.1"
+    serial: "C00AA-00000-00000-00000-00000"
+
+tolerations: []
+nodeSelector: {}
+
+imagePullSecrets: []
+imagePullPolicy: IfNotPresent
+
+volumes:
+  configPath: "/etc/copa-data"
+  loggingPath: "/var/log/copa-data"
+  configVolume:
+    size: 1Gi
+    storageClass: ""
+    accessMode: ReadWriteOnce
+  loggingVolume:
+    size: 1Gi
+    storageClass: ""
+    accessMode: ReadWriteOnce
+
+serviceEngine:
+  name: service-engine
+  hostName: service-engine
+  image: "copadata/service-engine"
+  opcUaService:
+    enabled: false
+    port: 4841
+    serviceIp: 192.168.0.99
+
+zenonLoggingServer:
+  enabled: true
+  name: zenon-logging-server
+  image: "copadata/zenon-logging-server"
+  port: 30000
