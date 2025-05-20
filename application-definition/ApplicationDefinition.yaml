@@ -1,0 +1,15 @@
+apiVersion: apps.kubermatic.k8c.io/v1
+kind: ApplicationDefinition
+metadata:
+  name: service-engine
+spec:
+  description: COPA-DATA Service Engine
+  method: helm
+  versions:
+    - template:
+        source:
+          helm:
+            chartName: Service-Engine
+            chartVersion: 14.0.0
+            url: https://github.com/FLECS-Technologies/apps-com.copadata.service-engine-bi/tree/3ad850e29c4507b09dd5889888c049a7cda3f637/k8s/helm/version%2014%20-%20BETA
+      version: 14.0.0
