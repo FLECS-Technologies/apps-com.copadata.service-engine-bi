@@ -11,5 +11,5 @@ spec:
           helm:
             chartName: Service-Engine
             chartVersion: 14.0.0
-            url: https://github.com/FLECS-Technologies/apps-com.copadata.service-engine-bi/tree/3ad850e29c4507b09dd5889888c049a7cda3f637/k8s/helm/version%2014%20-%20BETA
+            url: https://github.com/FLECS-Technologies/apps-com.copadata.service-engine-bi/tree/main/k8s/helm
       version: 14.0.0
