@@ -25,7 +25,7 @@
 
 
 version:
-  tag: "14.0.289815"
+  tag: "14.0" # <--- Edit to use image tag that has project baked in
 
 licensing:
   serviceEngine:
@@ -44,29 +44,17 @@ nodeSelector: {}
 imagePullSecrets: []
 imagePullPolicy: IfNotPresent
 
-volumes:
-  configPath: "/etc/copa-data"
-  loggingPath: "/var/log/copa-data"
-  configVolume:
-    size: 1Gi
-    storageClass: ""
-    accessMode: ReadWriteOnce
-  loggingVolume:
-    size: 1Gi
-    storageClass: ""
-    accessMode: ReadWriteOnce
-
 serviceEngine:
   name: service-engine
   hostName: service-engine
-  image: "copadata/service-engine"
+  image: "copadata/service-engine" # <--- Edit to use image that has project baked in
   opcUaService:
     enabled: false
     port: 4841
     serviceIp: 192.168.0.99
 
 zenonLoggingServer:
-  enabled: true
+  enabled: false
   name: zenon-logging-server
   image: "copadata/zenon-logging-server"
   port: 30000
