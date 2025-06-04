@@ -37,7 +37,8 @@ licensing:
     serial: 'C00YM-TTFHR-HQ9RJ-00001-68373'
 
 tolerations: []
-nodeSelector: {}
+nodeSelector:
+  type: salz-node-1
 
 imagePullSecrets: []
 imagePullPolicy: IfNotPresent
