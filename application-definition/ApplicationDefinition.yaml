@@ -1,15 +1,80 @@
 apiVersion: apps.kubermatic.k8c.io/v1
 kind: ApplicationDefinition
 metadata:
-  name: service-engine
+  name: copa-data-service-engine
 spec:
-  description: COPA-DATA Service Engine
+  displayName: COPA-DATA Service Engine
+  description: Software platform that makes the engineering and automated operation of manufacturing and infrastructure equipment incredibly easy.
   method: helm
   versions:
     - template:
         source:
-          helm:
-            chartName: Service-Engine
-            chartVersion: 14.0.0
-            url: https://github.com/FLECS-Technologies/apps-com.copadata.service-engine-bi/tree/main/k8s/helm
+          git:
+            path: k8s/helm
+            ref:
+              branch: main
+            remote: https://github.com/FLECS-Technologies/apps-com.copadata.service-engine-bi.git
       version: 14.0.0
+  documentationURL: https://github.com/FLECS-Technologies/apps-com.copadata.service-engine-bi
+  sourceURL: https://github.com/FLECS-Technologies/apps-com.copadata.service-engine-bi/tree/main/k8s/helm
+  defaultValuesBlock: |
+    # Default values for the zenon service engine.
+    # This is a YAML-formatted file.
+    # Declare variables to be passed into your templates.
+
+    # Required values are:
+    # licensing.*.server  <- IP or Name of Licensing Server
+    # licensing.*.serial  <- Serial of License to use (license mist be activated on license server)
+
+    # Recommended values to set are:
+    # volumes.*.storageClass                    <- storage class of the k8s cluster to use (Default SC if left empty)
+    # volumes.*.accessMode                      <- access mode to be used for the persistent volume (SC must support that accessMode)
+    # zenonLoggingServer.port                   <- specify the port that is used to access the zenon logging server externally, must be in range 30000-32767
+    # The port ranges of 30000-32767 is defined by the Kubernetes NodePort range, see: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
+
+
+    # OPCUA GW specifics:
+    # serviceEngine.hostName                    <- hostname of the created pod itself, important in combination with OPC UA as zenon uses the systems hostname for certificate creation and configuration
+    # serviceEngine.opcUaService.enabled        <- enable a service for the OPC UA Server to be reached from the outside
+    # serviceEngine.opcUaService.port           <- specify the port that is used to access the OPC UA server externally, must be in range 30000-32767
+    # serviceEngine.opcUaService.serviceIp      <- the IP for the OPC UA Server to be made available on
+    # DISCLAIMER: Due to the method that kubernetes assigns the hostname to created pods, the service-engine pod running the OPC UA Server receives only a server-internal DNS name
+    # as zenon uses the OS internal hostname to configure the OPC UA server and create the self-signed certificate, this might lead to problems when establishing a connection.
+
+    # The zenon project files will have to be copied manually into the created persistent volume in order for the service-engine to start
+
+
+    version:
+      tag: "14.0" # <--- Edit to use image tag that has project baked in
+
+    licensing:
+      serviceEngine:
+        server: "192.168.0.1"
+        serial: "C00AA-00000-00000-00000-00000"
+      processGateway:
+        server: "192.168.0.1"
+        serial: "C00AA-00000-00000-00000-00000"
+      logicService:
+        server: "192.168.0.1"
+        serial: "C00AA-00000-00000-00000-00000"
+
+    tolerations: []
+    nodeSelector: {}
+
+    imagePullSecrets: []
+    imagePullPolicy: IfNotPresent
+
+    serviceEngine:
+      name: service-engine
+      hostName: service-engine
+      image: "copadata/service-engine" # <--- Edit to use image that has project baked in
+      opcUaService:
+        enabled: false
+        port: 4841
+        serviceIp: 192.168.0.99
+
+    zenonLoggingServer:
+      enabled: false
+      name: zenon-logging-server
+      image: "copadata/zenon-logging-server"
+      port: 30000
