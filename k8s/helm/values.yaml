@@ -12,6 +12,7 @@
 # zenonLoggingServer.port                   <- specify the port that is used to access the zenon logging server externally, must be in range 30000-32767
 # The port ranges of 30000-32767 is defined by the Kubernetes NodePort range, see: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
 
+
 # OPCUA GW specifics:
 # serviceEngine.hostName                    <- hostname of the created pod itself, important in combination with OPC UA as zenon uses the systems hostname for certificate creation and configuration
 # serviceEngine.opcUaService.enabled        <- enable a service for the OPC UA Server to be reached from the outside
@@ -22,38 +23,42 @@
 
 # The zenon project files will have to be copied manually into the created persistent volume in order for the service-engine to start
 
+
 version:
-  tag: '14.0' # <--- Edit to use image tag that has project baked in
+  tag: "production" # <--- "staging" or "production"
 
 licensing:
   serviceEngine:
-    server: '20.4.18.156'
-    serial: 'C00YM-TTFHR-HQ9RJ-00001-68373'
+    server: 20.4.18.156
+    serial: "C00YM-TTFHR-HQ9RJ-00001-68373"
   processGateway:
-    server: '20.4.18.156'
-    serial: 'C00YM-TTFHR-HQ9RJ-00001-68373'
+    server: 20.4.18.156
+    serial: "C00YM-TTFHR-HQ9RJ-00001-68373"
   logicService:
-    server: '20.4.18.156'
-    serial: 'C00YM-TTFHR-HQ9RJ-00001-68373'
+    server: 20.4.18.156
+    serial: "C00YM-TTFHR-HQ9RJ-00001-68373"
 
 tolerations: []
-nodeSelector:
-  type: salz-node-1
+nodeSelector: {}
+nodeAffinity: {}
+# Sample node affinity based on node hostname tag:
+# nodeAffinity:
+#   preferredDuringSchedulingIgnoredDuringExecution:
+#     nodeSelectorTerms:
+#     - matchExpressions:
+#       - key: kubernetes.io/hostname
+#         operator: In
+#         values:
+#         - some-node-hostname
 
 imagePullSecrets: []
 imagePullPolicy: IfNotPresent
 
 serviceEngine:
-  name: service-engine
-  hostName: service-engine
-  image: 'moritzbernercd/se-bi-opcua-chase' # <--- Edit to use image that has project baked in
+  name: service-engine-2
+  hostName: service-engine-2
+  image: "moritzbernercd/se-bi-opcua-chase" # <--- Edit to use image that has project baked in
   opcUaService:
     enabled: false
     port: 4841
     serviceIp: 192.168.0.99
-
-zenonLoggingServer:
-  enabled: false
-  name: zenon-logging-server
-  image: 'copadata/zenon-logging-server'
-  port: 30000

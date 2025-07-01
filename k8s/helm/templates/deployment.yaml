@@ -43,37 +43,8 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8}}
       {{- end }}
----
-{{ if .Values.zenonLoggingServer.enabled }}
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: {{ .Values.zenonLoggingServer.name }}
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: {{ .Values.zenonLoggingServer.name }}
-  template:
-    metadata:
-      labels:
-        app: {{ .Values.zenonLoggingServer.name }}
-    spec:
-      containers:
-        - name: {{ .Values.zenonLoggingServer.name }}
-          image: {{ .Values.zenonLoggingServer.image }}:{{ .Values.version.tag }}
-          ports:
-            - containerPort: 50780
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{ end }}
-      {{- with .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8}}
-      {{ end }}
-      {{- with .Values.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8}}
+      {{- with .Values.nodeAffinity }}
+      affinity:
+        nodeAffinity:
+          {{- toYaml . | nindent 10 }}
       {{- end }}
-{{ end }}
